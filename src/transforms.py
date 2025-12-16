@@ -8,7 +8,6 @@ Used for:
 """
 
 import cv2
-import numpy as np
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
@@ -40,7 +39,7 @@ def base_preprocess(image_size=512):
 
 
 # --------------------------------------------------
-# Strong augmentation for BYOL
+# Strong augmentation for BYOL (self-supervised)
 # --------------------------------------------------
 def byol_augment(image_size=512):
     return A.Compose([
@@ -98,7 +97,7 @@ def labeled_augment(image_size=512):
 
 
 # --------------------------------------------------
-# Validation / inference preprocessing
+# Validation / inference preprocessing (no aug)
 # --------------------------------------------------
 def val_transform(image_size=512):
     return A.Compose([
