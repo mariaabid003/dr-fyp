@@ -1,0 +1,21 @@
+# datasets
+dataset/
+*.jpg
+*.png
+
+# model weights
+models/
+*.pth
+*.ckpt
+
+# outputs
+outputs/
+*.csv
+
+# python
+__pycache__/
+*.pyc
+.env
+
+# notebooks
+.ipynb_checkpoints/
