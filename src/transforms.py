@@ -14,8 +14,9 @@ from albumentations.pytorch import ToTensorV2
 
 # --------------------------------------------------
 # Utility: Crop black borders (fundus images)
+# IMPORTANT: must accept **kwargs for Albumentations
 # --------------------------------------------------
-def crop_black(image, threshold=10):
+def crop_black(image, threshold=10, **kwargs):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     _, mask = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
 
@@ -44,7 +45,8 @@ def base_preprocess(image_size=512):
 def byol_augment(image_size=512):
     return A.Compose([
         A.RandomResizedCrop(
-            size=(image_size, image_size),
+            height=image_size,
+            width=image_size,
             scale=(0.5, 1.0),
             p=1.0
         ),
@@ -76,7 +78,8 @@ def labeled_augment(image_size=512):
         A.RandomRotate90(p=0.3),
         A.HorizontalFlip(p=0.5),
         A.RandomResizedCrop(
-            size=(image_size, image_size),
+            height=image_size,
+            width=image_size,
             scale=(0.8, 1.0),
             p=0.5
         ),
