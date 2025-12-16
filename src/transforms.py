@@ -60,7 +60,7 @@ def byol_augment(image_size=512):
         A.GaussNoise(p=0.3),
         A.Blur(blur_limit=3, p=0.2),
         A.OneOf([
-            A.RandomGray(p=1.0),
+            A.ToGray(p=1.0),
             A.Solarize(p=1.0),
         ], p=0.1),
         A.Normalize(),
