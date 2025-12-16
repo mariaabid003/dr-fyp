@@ -34,8 +34,8 @@ def crop_black(image, threshold=10, **kwargs):
 def base_preprocess(image_size=512):
     return A.Compose([
         A.Lambda(image=crop_black),
-        A.Resize(height=image_size, width=image_size),
-        A.CenterCrop(height=image_size, width=image_size),
+        A.Resize(image_size, image_size),
+        A.CenterCrop(image_size, image_size),
     ])
 
 
@@ -45,9 +45,9 @@ def base_preprocess(image_size=512):
 def byol_augment(image_size=512):
     return A.Compose([
         A.RandomResizedCrop(
-            height=image_size,
-            width=image_size,
+            size=(image_size, image_size),
             scale=(0.5, 1.0),
+            ratio=(0.75, 1.33),
             p=1.0
         ),
         A.HorizontalFlip(p=0.5),
@@ -78,9 +78,9 @@ def labeled_augment(image_size=512):
         A.RandomRotate90(p=0.3),
         A.HorizontalFlip(p=0.5),
         A.RandomResizedCrop(
-            height=image_size,
-            width=image_size,
+            size=(image_size, image_size),
             scale=(0.8, 1.0),
+            ratio=(0.75, 1.33),
             p=0.5
         ),
         A.ColorJitter(
@@ -105,8 +105,8 @@ def labeled_augment(image_size=512):
 def val_transform(image_size=512):
     return A.Compose([
         A.Lambda(image=crop_black),
-        A.Resize(height=image_size, width=image_size),
-        A.CenterCrop(height=image_size, width=image_size),
+        A.Resize(image_size, image_size),
+        A.CenterCrop(image_size, image_size),
         A.Normalize(),
         ToTensorV2(),
     ])
