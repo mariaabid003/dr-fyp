@@ -17,37 +17,21 @@ from albumentations.pytorch import ToTensorV2
 # Utility: Crop black borders (fundus images)
 # --------------------------------------------------
 def crop_black(image, threshold=10):
-    """
-    Remove black borders from fundus images.
-
-    Args:
-        image (np.ndarray): RGB image
-        threshold (int): pixel intensity threshold
-
-    Returns:
-        np.ndarray: cropped image
-    """
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     _, mask = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
 
     coords = cv2.findNonZero(mask)
     if coords is None:
-        return image  # fallback
+        return image
 
     x, y, w, h = cv2.boundingRect(coords)
-    cropped = image[y:y+h, x:x+w]
-
-    return cropped
+    return image[y:y + h, x:x + w]
 
 
 # --------------------------------------------------
 # Base preprocessing (used everywhere)
 # --------------------------------------------------
 def base_preprocess(image_size=512):
-    """
-    Common preprocessing applied to all images
-    before any augmentation.
-    """
     return A.Compose([
         A.Lambda(image=crop_black),
         A.Resize(height=image_size, width=image_size),
@@ -56,17 +40,12 @@ def base_preprocess(image_size=512):
 
 
 # --------------------------------------------------
-# Strong augmentation for BYOL (self-supervised)
+# Strong augmentation for BYOL
 # --------------------------------------------------
 def byol_augment(image_size=512):
-    """
-    Strong augmentations for self-supervised learning.
-    Two different augmented views are sampled per image.
-    """
     return A.Compose([
         A.RandomResizedCrop(
-            height=image_size,
-            width=image_size,
+            size=(image_size, image_size),
             scale=(0.5, 1.0),
             p=1.0
         ),
@@ -94,16 +73,11 @@ def byol_augment(image_size=512):
 # Mild augmentation for supervised fine-tuning
 # --------------------------------------------------
 def labeled_augment(image_size=512):
-    """
-    Lighter augmentations for labeled data
-    to preserve diagnostic features.
-    """
     return A.Compose([
         A.RandomRotate90(p=0.3),
         A.HorizontalFlip(p=0.5),
         A.RandomResizedCrop(
-            height=image_size,
-            width=image_size,
+            size=(image_size, image_size),
             scale=(0.8, 1.0),
             p=0.5
         ),
@@ -124,12 +98,9 @@ def labeled_augment(image_size=512):
 
 
 # --------------------------------------------------
-# Validation / inference preprocessing (no aug)
+# Validation / inference preprocessing
 # --------------------------------------------------
 def val_transform(image_size=512):
-    """
-    Deterministic preprocessing for validation/inference.
-    """
     return A.Compose([
         A.Lambda(image=crop_black),
         A.Resize(height=image_size, width=image_size),
