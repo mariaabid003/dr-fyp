@@ -90,7 +90,6 @@ class LabeledDRDataset(Dataset):
         path, label = self.samples[idx]
 
         image = read_image(path)
-        image = base_preprocess()(image=image)["image"]
         image = self.transform(image=image)["image"]
 
         return image, torch.tensor(label, dtype=torch.long)
@@ -122,6 +121,7 @@ class UnlabeledDRDataset(Dataset):
         if len(self.image_paths) == 0:
             raise RuntimeError("No unlabeled images found!")
 
+        # base preprocessing ONLY for unlabeled data
         self.base_transform = base_preprocess(image_size)
 
         if byol:
